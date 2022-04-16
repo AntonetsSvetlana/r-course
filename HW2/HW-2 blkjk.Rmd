@@ -1,0 +1,153 @@
+---
+title: "HW2"
+author: "Antonets Svetlana"
+date: "09 04 2022"
+output: html_document
+---
+
+```{r}
+library(readr)
+urlfile="https://raw.githubusercontent.com/AntonZamyatin/r-course/main/HW2/deck.csv"
+mydata<-read_csv(url(urlfile))
+```
+
+```{r}
+rows= c(1:nrow(mydata))
+desk <- mydata[rep(rows, 4),]
+```
+
+```{r}
+shuffle_data <- function(desk) {
+  shuffled_data <- desk[sample(1:nrow(desk)), ]
+  return(shuffled_data)
+}
+```
+
+
+ 
+```{r}
+start_game <- function(desk) {
+  shuffled_data <- shuffle_data(desk)
+  rand_ind <- sample(nrow(shuffled_data), 2, replace = FALSE) 
+  dealers <- shuffled_data[rand_ind, ]
+  shuffled_data <- shuffled_data[-rand_ind, ]
+  print("Dealers hand")
+  print(dealers)
+  print("sum")
+  print(sum(dealers$value))
+  print("Your hand")
+  rand_ind <- sample(nrow(shuffled_data), 2, replace = FALSE) 
+  your <- shuffled_data[rand_ind, ]
+  shuffled_data <- shuffled_data[-rand_ind, ]
+  print(your)
+  print("sum")
+  print(sum(your$value))
+  print("Chances:")
+  if (sum(your$value) > sum(dealers$value) && sum(your$value) <= 21)  {
+    print("100")
+    stop_game(your)
+  }
+  if (sum(your$value)>21){
+    stop_game(your)
+  }
+  if (sum(your$value) <= sum(dealers$value)) {
+    difference = sum(dealers$value)-sum(your$value)
+    win_count = 0 
+    for (row in 1:nrow(shuffled_data)) {
+      if (shuffled_data[row,]$value >= difference && shuffled_data[row,]$value <= (21-sum(your$value))){
+        win_count = win_count+1}
+    }
+      
+    print(win_count/nrow(shuffled_data)*100)
+  }
+  
+  return(list(shuffled_data,dealers,your))
+}
+```
+
+
+
+```{r}
+deal <- function(shuffled_data) {
+  print("Dealers hand")
+  print(dealer)
+  print("sum")
+  print(sum(dealer$value))
+  print("Your hand")
+  rand_ind <- sample(nrow(shuffled_data), 1, replace = FALSE) 
+  your <- shuffled_data[rand_ind, ]
+  shuffled_data <- shuffled_data[-rand_ind, ]
+  you[nrow(you) + 1,] <- your 
+  print(you)
+  print("sum")
+  print(sum(you$value))
+  print("Chances:")
+  if (sum(you$value) > sum(dealer$value) && sum(you$value) <= 21)  {
+    print("100")
+    stop_game(you)
+  }
+  if (sum(you$value)>21){
+    stop_game(you)
+  }
+  if (sum(you$value) <= sum(dealer$value)) {
+    difference <- sum(dealer$value)-sum(you$value)
+    win_count = 0 
+    for (row in 1:nrow(shuffled_data)) {
+      if (shuffled_data[row,]$value >= difference && shuffled_data[row,]$value <= (21-sum(you$value))){
+        win_count = win_count+1}
+    }
+      
+    print(win_count/nrow(shuffled_data)*100)
+  }
+  return(list(shuffled_data,you))
+}
+```
+
+```{r}
+stop_game <- function(player) {
+  if (sum(player$value)>21) {
+    print("You loose")
+  } else {
+    print("You win")
+  }
+}
+```
+Game 1 (loosing one)
+
+```{r}
+set.seed(1)
+ans <- start_game(desk)
+shuffled_data <- ans[[1]]
+dealer <- ans[[2]]
+you <- ans[[3]]
+```
+
+```{r}
+set.seed(1)
+res <- deal(shuffled_data)
+you <- res[[2]]
+shuffled_data <-res[[1]]
+```
+Game 2 (winning one)
+```{r}
+set.seed(2)
+ans <- start_game(desk)
+shuffled_data <- ans[[1]]
+dealer <- ans[[2]]
+you <- ans[[3]]
+```
+
+```{r}
+set.seed(2)
+res <- deal(shuffled_data)
+you <- res[[2]]
+shuffled_data <-res[[1]]
+```
+
+
+
+
+
+
+
+
